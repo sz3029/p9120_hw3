@@ -48,26 +48,9 @@ X_test <- spam[spam$train == 1,] %>% select(-spam, -train)
 y_test <- spam[spam$train == 1,]$spam
 
 write.csv(X_test, 'X_test.csv')
-```
-
-Fit a 3-layers, 2 dropout layers neural network to the training set:
-
-```{r}
-p <- ncol(X_train)
-model_nn <- keras_model_sequential()
-
-model_nn <- layer_dense(units = 256, activation = "relu", input_shape = p) %>%
-            layer_batch_normalization() %>%
-            layer_dropout(rate = 0.4) %>%
-            layer_dense(units = 128, activation = "relu") %>%
-            layer_batch_normalization() %>%
-            layer_dropout(rate = 0.4) %>%
-            layer_dense(units = 64, activation = "relu") %>%
-            layer_batch_normalization() %>%
-            layer_dropout(rate = 0.4) %>%
-            layer_dense(units = 1, activation = "sigmoid")
-summary(model_nn)
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])   
+write.csv(y_test, 'y_test.csv')
+write.csv(X_train, 'X_train.csv')
+write.csv(y_train, 'y_train.csv')
 ```
 
 

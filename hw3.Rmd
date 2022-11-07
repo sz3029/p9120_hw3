@@ -5,6 +5,12 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(caret)
+library(MASS)
+library(pROC)
+library(glmnet)
+library(dplyr)
+library(ggplot2)
 ```
 
 ## Q2
@@ -12,10 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 (b) Redo the computations for the example of Figure 10.2. Plot the training error as well as test error, and discuss its behavior.
 
 ```{r}
-spam <- read.table("https://hastie.su.domains/ElemStatLearn/datasets/spam.data",
-                    sep=" ", header = FALSE)
-colnames(spam) <- c(read.table("spambase.names", header=F, sep=":", skip = 33, fill = TRUE)[,1], 'train')
-names(spam)[names(spam) == 'char_freq_'] <- 'char_freq_#'
+
 ```
 
 (c) Investigate the number of iterations needed to make the test error finally start to rise.
@@ -29,7 +32,43 @@ names(spam)[names(spam) == 'char_freq_'] <- 'char_freq_#'
 The “spam” data” ( https://web.stanford.edu/hastie/ElemStatLearn/data) has been divided into a training set and a test set. Fit a neural network to the training set, and calculate its classification error on the test set. Compare your results to the classification tree results presented in Section 9.2.5 of [ESL] on both the classification performance and interpretability of the final model.
 
 ```{r}
+spam <- read.table("https://hastie.su.domains/ElemStatLearn/datasets/spam.data",
+                    sep=" ", header = FALSE)
+traintest <- read.table("https://hastie.su.domains/ElemStatLearn/datasets/spam.traintest",
+                    sep=" ", header = FALSE)
+colnames(spam) <- c(read.table("spambase.names", header=F, sep=":", skip = 33, fill = TRUE)[,1], 'spam')
+spam$train <- traintest
+names(spam)[names(spam) == 'char_freq_'] <- 'char_freq_#'
 
+#train test split
+X_train <- spam[spam$train == 0,] %>% select(-spam, -train)
+y_train <- spam[spam$train == 0,]$spam
+
+X_test <- spam[spam$train == 1,] %>% select(-spam, -train)
+y_test <- spam[spam$train == 1,]$spam
+
+write.csv(X_test, 'X_test.csv')
 ```
+
+Fit a 3-layers, 2 dropout layers neural network to the training set:
+
+```{r}
+p <- ncol(X_train)
+model_nn <- keras_model_sequential()
+
+model_nn <- layer_dense(units = 256, activation = "relu", input_shape = p) %>%
+            layer_batch_normalization() %>%
+            layer_dropout(rate = 0.4) %>%
+            layer_dense(units = 128, activation = "relu") %>%
+            layer_batch_normalization() %>%
+            layer_dropout(rate = 0.4) %>%
+            layer_dense(units = 64, activation = "relu") %>%
+            layer_batch_normalization() %>%
+            layer_dropout(rate = 0.4) %>%
+            layer_dense(units = 1, activation = "sigmoid")
+summary(model_nn)
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])   
+```
+
 
 

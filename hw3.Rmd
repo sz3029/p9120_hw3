@@ -1,0 +1,35 @@
+---
+title: "P9120 HW3 Q2,3"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q2
+
+(b) Redo the computations for the example of Figure 10.2. Plot the training error as well as test error, and discuss its behavior.
+
+```{r}
+spam <- read.table("https://hastie.su.domains/ElemStatLearn/datasets/spam.data",
+                    sep=" ", header = FALSE)
+colnames(spam) <- c(read.table("spambase.names", header=F, sep=":", skip = 33, fill = TRUE)[,1], 'train')
+names(spam)[names(spam) == 'char_freq_'] <- 'char_freq_#'
+```
+
+(c) Investigate the number of iterations needed to make the test error finally start to rise.
+
+
+
+(d) Change the setup of this example as follows: define two classes, with the features in Class 1 being $X_1, X_2, ... X_{10}$, standard independent Gaussian variates. In Class 2, the features $X_1, X_2, ... X_{10}$, are also standard independent Gaussian, but conditioned on the event $\sum_{j}X_J^2 > 12$. Now the classes have significant overlap in feature space. Repeat the AdaBoost experiments as in Figure 10.2 and discuss the results.
+
+## Q3
+
+The “spam” data” ( https://web.stanford.edu/hastie/ElemStatLearn/data) has been divided into a training set and a test set. Fit a neural network to the training set, and calculate its classification error on the test set. Compare your results to the classification tree results presented in Section 9.2.5 of [ESL] on both the classification performance and interpretability of the final model.
+
+```{r}
+
+```
+
+
